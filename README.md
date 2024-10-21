@@ -10,3 +10,4 @@ A platform that allow users to browse, read, and manage comics. The platform als
 4. Comic Viewing
 
 ## Version 2
+[Documentation]((https://docs.google.com/document/d/1G0J2kwXOEHS3Y44X0mwu7QlIbOT5PVt0Lc8i-3fMcJ8/edit?usp=sharing))
