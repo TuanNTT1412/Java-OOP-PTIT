@@ -1,0 +1,10 @@
+1;One Piece;On Going;Adventure;Eiichiro Oda;
+2;Naruto;On Going;Action;Masashi Kishimoto;
+3;Attack on Titan;On Going;Dark Fantasy;Hajime Isayama;
+4;Dragon Ball;Completed;Action;Akira Toriyama;
+5;Death Note;Completed;Mystery;Tsugumi Ohba;
+6;Bleach;Completed;Action;Tite Kubo;
+7;Demon Slayer;Completed;Action;Koyoharu Gotouge;
+8;My Hero Academia;On Going;Action;Kohei Horikoshi;
+9;Tokyo Revengers;On Going;Drama;Ken Wakui;
+10;Jujutsu Kaisen;On Going;Supernatural;Gege Akutami;
