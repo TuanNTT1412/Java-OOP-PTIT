@@ -172,7 +172,7 @@ private void LoadChaptersFromFile() {
     }
 
     public void setLbComicIcon() {
-        String fileIconPath = "C:/Users/admin/Downloads/Wassup/ComicApp/ComicImage/" + comicId + "/icon.png"; // Đường dẫn tuyệt đối
+        String fileIconPath = "ComicImage/" + comicId + "/icon.png";  // Đường dẫn tuyệt đối
         java.io.File imgFile = new java.io.File(fileIconPath);
 
         if (imgFile.exists()) {
