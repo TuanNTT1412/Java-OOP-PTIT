@@ -1,6 +1,5 @@
 package user;
 
-import Model.Comic;
 import Model.History;
 import Model.Library;
 import Model.User;
@@ -13,9 +12,6 @@ public class Login extends javax.swing.JFrame {
 
     private List<User> userList;
     private static final String USER_FILE = "USER.TXT";
-
-    private List<Comic> comicList;
-    private static final String COMIC_FILE = "COMIC.TXT";
 
     private List<Library> libraryList;
     private static final String LIBRARY_FILE = "LIBRARY.TXT";
@@ -31,7 +27,6 @@ public class Login extends javax.swing.JFrame {
 
     private void init() {
         LoadUsersFromFile();
-        LoadComicsFromFile();
         LoadHistoryFromFile();
         LoadLibraryFromFile();
     }
@@ -96,61 +91,6 @@ public class Login extends javax.swing.JFrame {
         WriteUsersToFile();
     }
 
-
-    /* */
-    private void LoadComicsFromFile() {
-        File file = new File(COMIC_FILE);
-        try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (file.length() > 0) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(COMIC_FILE))) {
-                String line;
-                comicList = new ArrayList<>();
-                while ((line = reader.readLine()) != null) {
-                    String[] comicData = line.split(";");
-                    if (comicData.length >= 5) {
-                        String comicID = comicData[0];
-                        String comicName = comicData[1];
-                        String comicStatus = comicData[2];
-                        String comicCategory = comicData[3];
-                        String comicAuthor = comicData[4];
-
-                        Comic comic = new Comic(comicID, comicName, comicStatus, comicCategory, comicAuthor);
-                        comicList.add(comic);
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            comicList = new ArrayList<>();
-        }
-    }
-
-    /*
-    private void writeDataToFileComic() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(COMIC_FILE))) {
-            for (Comic comic : comicList) {
-                writer.write(comic.getComicID() + ";" + comic.getComicName() + ";" + comic.getComicStatus() + ";" + comic.getComicCategory() + ";" + comic.getComicAuthor() + ";" + comic.getComicImageUrl());
-                writer.newLine();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void setComicListData(List<Comic> ExternalComicList) {
-        comicList = ExternalComicList;
-        writeDataToFileComic();
-    }
-     */
- /* */
     private void LoadHistoryFromFile() {
         File file = new File(HISTORY_FILE);
         try {
@@ -444,8 +384,8 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_lbRegisterMouseClicked
 
     private void lbResetPasswordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbResetPasswordMouseClicked
-        ResetPassword forgotPassword = new ResetPassword(this);
-        forgotPassword.setVisible(true);
+        ResetPassword resetPassword = new ResetPassword(this);
+        resetPassword.setVisible(true);
         lbResetPassword.setBackground(null);
         lbResetPassword.setOpaque(false);
         this.dispose();
@@ -479,9 +419,9 @@ public class Login extends javax.swing.JFrame {
             for (User user : userList) {
                 if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
                     User newUser = user;
-                    Home userDashboard = new Home(newUser, this);
-                    userDashboard.setVisible(true);
-                    userDashboard.pack();
+                    Home home = new Home(newUser, this);
+                    home.setVisible(true);
+                    home.pack();
 
                     check = true;
                     this.dispose();

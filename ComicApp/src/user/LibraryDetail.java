@@ -18,7 +18,7 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
-public class Home extends javax.swing.JFrame {
+public class LibraryDetail extends javax.swing.JFrame {
 
     private List<History> historyList;
     private static final String HISTORY_FILE = "HISTORY.TXT";
@@ -29,27 +29,18 @@ public class Home extends javax.swing.JFrame {
     private List<Comic> comicList;
     private static final String COMIC_FILE = "COMIC.TXT";
 
-    private Login login;
-
+    private Home home;
     private User user;
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Home() {
+    public LibraryDetail() {
         initComponents();
         setLocationRelativeTo(null);
     }
 
-    public Home(User user, Login login) {
+    public LibraryDetail(User user, Home home) {
         this();
         this.user = user;
-        this.login = login;
+        this.home = home;
         setLbMyAccountText();
         LoadComicsFromFile();
         LoadHistoryFromFile();
@@ -60,12 +51,11 @@ public class Home extends javax.swing.JFrame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                Home.this.setVisible(false);
-                login.setVisible(true);
+                LibraryDetail.this.setVisible(false);
+                home.setVisible(true);
             }
         });
     }
-
     private void LoadComicsFromFile() {
         File file = new File(COMIC_FILE);
         try {
@@ -105,15 +95,26 @@ public class Home extends javax.swing.JFrame {
         }
     }
 
-    private void LoadComicsToTable() {
-        DefaultTableModel model = (DefaultTableModel) ComicTable.getModel();
-        model.setRowCount(0);
+private void LoadComicsToTable() {
+    DefaultTableModel model = (DefaultTableModel) ComicTable.getModel();
+    model.setRowCount(0);
 
-        for (int i = 0; i < comicList.size(); i++) {
-            Comic comic = comicList.get(i);
-            model.addRow(new Object[]{i + 1, comic.getComicName(), comic.getComicAuthor(), comic.getComicCategory(), comic.getComicStatus()});
-        }
+    List<String> userLibrary = getUserLibrary();
+
+    List<Object[]> comicDetails = getComicDetails(userLibrary);
+
+    for (int i = 0; i < comicDetails.size(); i++) {
+        Object[] comicData = comicDetails.get(i);
+        model.addRow(new Object[]{
+            i + 1,
+            comicData[1],
+            comicData[2],
+            comicData[3],
+            comicData[4]
+        });
     }
+}
+
 
     private void LoadHistoryFromFile() {
         File file = new File(HISTORY_FILE);
@@ -186,6 +187,36 @@ public class Home extends javax.swing.JFrame {
         lbMyAccount.setText(user.getUsername());
     }
 
+        
+private List<String> getUserLibrary() {
+    List<String> userLibrary = new ArrayList<>();
+
+    for (Library library : libraryList) {
+        if (library.getUserID().equals(String.valueOf(user.getUserID()))) {
+            userLibrary.addAll(library.getFollowedComicIDs());
+            break;
+        }
+    }
+    return userLibrary;
+}
+
+    private List<Object[]> getComicDetails(List<String> comicIds) {
+        List<Object[]> comicDetails = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(COMIC_FILE))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(";");
+                if (parts.length >= 5 && comicIds.contains(parts[0])) {
+                    comicDetails.add(new Object[]{parts[0], parts[1], parts[2], parts[3], parts[4]});
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return comicDetails;
+    }
+
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -194,10 +225,10 @@ public class Home extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        lbHome = new javax.swing.JLabel();
         lbLibrary = new javax.swing.JLabel();
         lbHistory = new javax.swing.JLabel();
         lbMyAccount = new javax.swing.JLabel();
+        lbHome = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         ComicTable = new javax.swing.JTable();
@@ -231,41 +262,26 @@ public class Home extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(211, 211, 211));
 
-        lbHome.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        lbHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home.png"))); // NOI18N
-        lbHome.setText("Home");
+        lbLibrary.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        lbLibrary.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/library.png"))); // NOI18N
+        lbLibrary.setText("Library");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lbHome, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lbLibrary)
+                .addContainerGap(13, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lbHome)
+                .addContainerGap()
+                .addComponent(lbLibrary, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
-
-        lbLibrary.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
-        lbLibrary.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/library.png"))); // NOI18N
-        lbLibrary.setText("Library");
-        lbLibrary.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbLibraryMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbLibraryMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbLibraryMouseExited(evt);
-            }
-        });
 
         lbHistory.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         lbHistory.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/history.png"))); // NOI18N
@@ -286,31 +302,46 @@ public class Home extends javax.swing.JFrame {
         lbMyAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/My Account.png"))); // NOI18N
         lbMyAccount.setText("My Account");
 
+        lbHome.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/home.png"))); // NOI18N
+        lbHome.setText("Home");
+        lbHome.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbHomeMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbHomeMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbHomeMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(22, 22, 22)
+                .addComponent(lbHome, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
-                .addComponent(lbLibrary)
-                .addGap(30, 30, 30)
+                .addGap(20, 20, 20)
                 .addComponent(lbHistory)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 346, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lbMyAccount)
                 .addGap(65, 65, 65))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lbMyAccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbHistory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbLibrary, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lbHome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(lbMyAccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         ComicTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -333,11 +364,6 @@ public class Home extends javax.swing.JFrame {
             }
         });
         ComicTable.getTableHeader().setReorderingAllowed(false);
-        ComicTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                ComicTableMouseClicked(evt);
-            }
-        });
         jScrollPane1.setViewportView(ComicTable);
         if (ComicTable.getColumnModel().getColumnCount() > 0) {
             ComicTable.getColumnModel().getColumn(0).setResizable(false);
@@ -351,7 +377,9 @@ public class Home extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 999, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -383,55 +411,50 @@ public class Home extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 
-    private void lbLibraryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbLibraryMouseClicked
-        LibraryDetail libraryDetail = new LibraryDetail(user, this);
-        libraryDetail.setVisible(true);
-        lbLibrary.setBackground(null);
-        lbLibrary.setOpaque(false);
-        this.dispose();
-    }//GEN-LAST:event_lbLibraryMouseClicked
-
     private void lbHistoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHistoryMouseClicked
 
     }//GEN-LAST:event_lbHistoryMouseClicked
 
-    private void lbLibraryMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbLibraryMouseEntered
-
-        lbLibrary.setBackground(Color.LIGHT_GRAY);
-        lbLibrary.setOpaque(true);
-    }//GEN-LAST:event_lbLibraryMouseEntered
-
-    private void lbLibraryMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbLibraryMouseExited
-
-        lbLibrary.setBackground(null);
-        lbLibrary.setOpaque(false);
-    }//GEN-LAST:event_lbLibraryMouseExited
-
     private void lbHistoryMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHistoryMouseEntered
 
         lbHistory.setBackground(Color.LIGHT_GRAY);
-        lbHistory.setOpaque(true); 
+        lbHistory.setOpaque(true);
     }//GEN-LAST:event_lbHistoryMouseEntered
 
     private void lbHistoryMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHistoryMouseExited
 
-        lbHistory.setBackground(null);
-        lbHistory.setOpaque(false); 
+        lbHistory.setBackground(null); 
+        lbHistory.setOpaque(false);
     }//GEN-LAST:event_lbHistoryMouseExited
 
-    private void ComicTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ComicTableMouseClicked
+    private void lbHomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHomeMouseClicked
 
-        int row = ComicTable.getSelectedRow();
-        if (row != -1) {
+        home.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_lbHomeMouseClicked
 
-            Comic comic = comicList.get(row);
+    private void lbHomeMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHomeMouseEntered
 
-            ComicDetail comicDetail = new ComicDetail(user, this, comic.getComicID());
-            comicDetail.setVisible(true);
-        }
-    }//GEN-LAST:event_ComicTableMouseClicked
+        lbHome.setBackground(Color.LIGHT_GRAY);
+        lbHome.setOpaque(true);
+    }//GEN-LAST:event_lbHomeMouseEntered
+
+    private void lbHomeMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHomeMouseExited
+
+        lbHome.setBackground(null);
+        lbHome.setOpaque(false);
+    }//GEN-LAST:event_lbHomeMouseExited
 
     public static void main(String args[]) {
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -442,7 +465,7 @@ public class Home extends javax.swing.JFrame {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Home().setVisible(true);
+                new LibraryDetail().setVisible(true);
             }
         });
     }

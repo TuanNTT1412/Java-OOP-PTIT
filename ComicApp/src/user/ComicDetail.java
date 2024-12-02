@@ -1,5 +1,6 @@
 package user;
 
+import Model.User;
 import Model.Comic;
 import Model.Library;
 import Model.Chapter;
@@ -7,15 +8,16 @@ import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class ComicDetail extends javax.swing.JFrame {
@@ -25,21 +27,23 @@ public class ComicDetail extends javax.swing.JFrame {
 
     private List<Comic> comicList;
     private static final String COMIC_FILE = "COMIC.TXT";
-    
+
     private List<Chapter> chapterList;
     private static final String CHAPTER_FILE = "CHAPTER.TXT";
 
     private String comicId;
     private Home home;
+    private User user;
 
     public ComicDetail() {
         initComponents();
         setLocationRelativeTo(null);
     }
 
-    public ComicDetail(Home home, String comicID) {
+    public ComicDetail(User user, Home home, String comicID) {
         initComponents();
         setLocationRelativeTo(null);
+        this.user = user;
         this.home = home;
         this.comicId = comicID;
         setLbComicIcon();
@@ -47,6 +51,7 @@ public class ComicDetail extends javax.swing.JFrame {
         LoadChaptersFromFile();
         LoadLibraryFromFile();
         displayComicInfo();
+        checkFollowStatus();
         LoadChaptersToTable();
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() {
@@ -97,47 +102,44 @@ public class ComicDetail extends javax.swing.JFrame {
         }
     }
 
-private void LoadChaptersFromFile() {
-    File file = new File(CHAPTER_FILE);
-    try {
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-
-    if (file.length() > 0) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(CHAPTER_FILE))) {
-            String line;
-            chapterList = new ArrayList<>();
-            while ((line = reader.readLine()) != null) {
-                String[] chapterData = line.split(";"); // Assuming data is separated by ";"
-                if (chapterData.length >= 3) {
-                    try {
-                        // Adjust to parse comicID, chapterNumber, and chapterTitle
-                        String comicID = chapterData[0].trim(); // First part is comicID
-                        int chapterNumber = Integer.parseInt(chapterData[1].trim()); // Second part is chapterNumber
-                        String chapterTitle = chapterData[2].trim(); // Third part is chapterTitle
-
-                        Chapter chapter = new Chapter(comicID, chapterNumber, chapterTitle);
-                        chapterList.add(chapter);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Skipping invalid chapter line: " + line);
-                    }
-                }
+    private void LoadChaptersFromFile() {
+        File file = new File(CHAPTER_FILE);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
             }
-            System.out.println("Loaded " + chapterList.size() + " chapters.");
         } catch (IOException e) {
             e.printStackTrace();
         }
-    } else {
-        chapterList = new ArrayList<>();
-        System.out.println("No data in chapter file.");
+
+        if (file.length() > 0) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(CHAPTER_FILE))) {
+                String line;
+                chapterList = new ArrayList<>();
+                while ((line = reader.readLine()) != null) {
+                    String[] chapterData = line.split(";");
+                    if (chapterData.length >= 3) {
+                        try {
+                            String comicID = chapterData[0].trim();
+                            int chapterNumber = Integer.parseInt(chapterData[1].trim());
+                            String chapterTitle = chapterData[2].trim();
+
+                            Chapter chapter = new Chapter(comicID, chapterNumber, chapterTitle);
+                            chapterList.add(chapter);
+                        } catch (NumberFormatException e) {
+                            System.out.println("Skipping invalid chapter line: " + line);
+                        }
+                    }
+                }
+                System.out.println("Loaded " + chapterList.size() + " chapters.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            chapterList = new ArrayList<>();
+            System.out.println("No data in chapter file.");
+        }
     }
-}
-
-
 
     private void LoadLibraryFromFile() {
         File file = new File(LIBRARY_FILE);
@@ -171,8 +173,24 @@ private void LoadChaptersFromFile() {
         }
     }
 
+        private void writeLibraryToFile() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(LIBRARY_FILE, false))) {
+            for (Library library : libraryList) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(library.getUserID()).append(",");
+                for (String comicID : library.getFollowedComicIDs()) {
+                    sb.append(comicID).append(",");
+                }
+                bw.write(sb.toString().replaceAll(",$", ""));
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     public void setLbComicIcon() {
-        String fileIconPath = "ComicImage/" + comicId + "/icon.png";  // Đường dẫn tuyệt đối
+        String fileIconPath = "ComicImage/" + comicId + "/icon.png";
         java.io.File imgFile = new java.io.File(fileIconPath);
 
         if (imgFile.exists()) {
@@ -185,10 +203,10 @@ private void LoadChaptersFromFile() {
     private Comic findComicByID(String comicID) {
         for (Comic comic : comicList) {
             if (comic.getComicID().equals(comicID)) {
-                return comic; // Trả về truyện tranh tìm được
+                return comic;
             }
         }
-        return null; // Trường hợp không tìm thấy truyện
+        return null;
     }
 
     private void displayComicInfo() {
@@ -198,34 +216,74 @@ private void LoadChaptersFromFile() {
         lbCategory.setText("Category: " + selectedComic.getComicCategory());
         lbStatus.setText("Status: " + selectedComic.getComicStatus());
     }
-    
+
     private List<Chapter> findChaptersByComicID(String comicID, List<Chapter> chapterList) {
         List<Chapter> selectedChapters = new ArrayList<>();
         for (Chapter chapter : chapterList) {
             if (chapter.getComicID().equals(comicID)) {
-                selectedChapters.add(chapter); // Thêm chương vào danh sách nếu comicID trùng
+                selectedChapters.add(chapter);
             }
         }
-        return selectedChapters; // Trả về danh sách các chương
+        return selectedChapters;
     }
 
-private void LoadChaptersToTable() {
-    // Lấy mô hình của JTable
-    DefaultTableModel model = (DefaultTableModel) ChapterTable.getModel();
-    // Xóa dữ liệu cũ trong bảng
-    model.setRowCount(0);
+    private void checkFollowStatus() {
+        boolean isFollowed = false;
 
-    // Lọc các chương theo comicID
-    List<Chapter> selectedChapters = findChaptersByComicID(comicId, chapterList);
-
-    // Lặp qua danh sách các chapter đã lọc và thêm vào bảng
-    for (int i = 0; i < selectedChapters.size(); i++) {
-        Chapter chapter = selectedChapters.get(i);
-        // Thêm dòng mới vào bảng với số chương và tiêu đề
-        model.addRow(new Object[]{chapter.getChapterNumber(), chapter.getTitle()});
+        for (Library library : libraryList) {
+            if (library.getUserID().equals(user.getUserID())) {
+                if (library.getFollowedComicIDs().contains(comicId)) {
+                    isFollowed = true;
+                }
+                break;
+            }
+        }
+        btnFollow.setText(isFollowed ? "Unfollow" : "Follow");
+        btnFollow.setBackground(isFollowed ? Color.RED : Color.GREEN);
     }
+
+    public void updateLibraryData(boolean isFollow) {
+    boolean isUserFound = false;
+    for (Library library : libraryList) {
+        if (library.getUserID().equals(user.getUserID())) {
+            isUserFound = true;
+            Set<String> comicIDs = library.getFollowedComicIDs();
+
+            if (isFollow) {
+                comicIDs.add(comicId);
+            } else {
+                comicIDs.remove(comicId);
+            }
+
+            library.setFollowedComicIDs(comicIDs);
+            break;
+        }
+    }
+
+    if (!isUserFound) {
+        Set<String> comicIDs = new HashSet<>();
+        if (isFollow) {
+            comicIDs.add(comicId);
+        }
+        Library newLibrary = new Library(user.getUserID(), comicIDs);
+        libraryList.add(newLibrary);
+    }
+
+    writeLibraryToFile();
 }
 
+    
+    private void LoadChaptersToTable() {
+        DefaultTableModel model = (DefaultTableModel) ChapterTable.getModel();
+        model.setRowCount(0);
+
+        List<Chapter> selectedChapters = findChaptersByComicID(comicId, chapterList);
+
+        for (int i = 0; i < selectedChapters.size(); i++) {
+            Chapter chapter = selectedChapters.get(i);
+            model.addRow(new Object[]{chapter.getChapterNumber(), chapter.getTitle()});
+        }
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -238,6 +296,7 @@ private void LoadChaptersToTable() {
         lbAuthor = new javax.swing.JLabel();
         lbStatus = new javax.swing.JLabel();
         lbNChapters = new javax.swing.JLabel();
+        btnFollow = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         ChapterTable = new javax.swing.JTable();
@@ -263,6 +322,14 @@ private void LoadChaptersToTable() {
         lbNChapters.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lbNChapters.setText("Number of Chapters:");
 
+        btnFollow.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btnFollow.setText("Follow");
+        btnFollow.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFollowActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -281,7 +348,8 @@ private void LoadChaptersToTable() {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(lbNChapters, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
-                            .addComponent(lbStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(lbStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnFollow, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -301,7 +369,9 @@ private void LoadChaptersToTable() {
                         .addGap(30, 30, 30)
                         .addComponent(lbNChapters)))
                 .addGap(17, 17, 17)
-                .addComponent(lbAuthor)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbAuthor)
+                    .addComponent(btnFollow, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(30, Short.MAX_VALUE))
         );
 
@@ -367,49 +437,53 @@ private void LoadChaptersToTable() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ComicDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ComicDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ComicDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ComicDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
+    private void btnFollowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFollowActionPerformed
 
-        /* Create and display the form */
+        if (btnFollow.getText().equals("Follow")) {
+            btnFollow.setText("Unfollow");
+            btnFollow.setBackground(Color.RED);
+            updateLibraryData(true);
+        } else if (btnFollow.getText().equals("Unfollow")) {
+            btnFollow.setText("Follow");
+            btnFollow.setBackground(Color.GREEN);
+            updateLibraryData(false);
+        }
+    }//GEN-LAST:event_btnFollowActionPerformed
+
+
+    public static void main(String args[]) {
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(ComicDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(ComicDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(ComicDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(ComicDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new ComicDetail().setVisible(true);
@@ -419,6 +493,7 @@ private void LoadChaptersToTable() {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable ChapterTable;
+    private javax.swing.JButton btnFollow;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
