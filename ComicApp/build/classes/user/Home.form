@@ -234,7 +234,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="jTable1">
+            <Component class="javax.swing.JTable" name="ComicTable">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="5" rowCount="4">
@@ -279,10 +279,10 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTable1MouseClicked"/>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ComicTableMouseClicked"/>
               </Events>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if (jTable1.getColumnModel().getColumnCount() &gt; 0) {&#xa;    jTable1.getColumnModel().getColumn(0).setResizable(false);&#xa;    jTable1.getColumnModel().getColumn(1).setResizable(false);&#xa;    jTable1.getColumnModel().getColumn(2).setResizable(false);&#xa;    jTable1.getColumnModel().getColumn(3).setResizable(false);&#xa;    jTable1.getColumnModel().getColumn(4).setResizable(false);&#xa;}"/>
+                <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if (ComicTable.getColumnModel().getColumnCount() &gt; 0) {&#xa;    ComicTable.getColumnModel().getColumn(0).setResizable(false);&#xa;    ComicTable.getColumnModel().getColumn(1).setResizable(false);&#xa;    ComicTable.getColumnModel().getColumn(2).setResizable(false);&#xa;    ComicTable.getColumnModel().getColumn(3).setResizable(false);&#xa;    ComicTable.getColumnModel().getColumn(4).setResizable(false);&#xa;}"/>
               </AuxValues>
             </Component>
           </SubComponents>

@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class Home extends javax.swing.JFrame {
@@ -34,8 +33,6 @@ public class Home extends javax.swing.JFrame {
 
     private User user;
 
-    //private Library libary;
-    //private History history;
     public User getUser() {
         return user;
     }
@@ -108,7 +105,7 @@ public class Home extends javax.swing.JFrame {
     }
 
     private void LoadComicsToTable() {
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) ComicTable.getModel();
         model.setRowCount(0);
 
         for (int i = 0; i < comicList.size(); i++) {
@@ -202,7 +199,7 @@ public class Home extends javax.swing.JFrame {
         lbMyAccount = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        ComicTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -315,7 +312,7 @@ public class Home extends javax.swing.JFrame {
             .addComponent(lbMyAccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        ComicTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -334,19 +331,19 @@ public class Home extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.getTableHeader().setReorderingAllowed(false);
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        ComicTable.getTableHeader().setReorderingAllowed(false);
+        ComicTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTable1MouseClicked(evt);
+                ComicTableMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setResizable(false);
-            jTable1.getColumnModel().getColumn(1).setResizable(false);
-            jTable1.getColumnModel().getColumn(2).setResizable(false);
-            jTable1.getColumnModel().getColumn(3).setResizable(false);
-            jTable1.getColumnModel().getColumn(4).setResizable(false);
+        jScrollPane1.setViewportView(ComicTable);
+        if (ComicTable.getColumnModel().getColumnCount() > 0) {
+            ComicTable.getColumnModel().getColumn(0).setResizable(false);
+            ComicTable.getColumnModel().getColumn(1).setResizable(false);
+            ComicTable.getColumnModel().getColumn(2).setResizable(false);
+            ComicTable.getColumnModel().getColumn(3).setResizable(false);
+            ComicTable.getColumnModel().getColumn(4).setResizable(false);
         }
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -421,9 +418,9 @@ public class Home extends javax.swing.JFrame {
         lbHistory.setOpaque(false); // Không hiển thị màu nền
     }//GEN-LAST:event_lbHistoryMouseExited
 
-    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+    private void ComicTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ComicTableMouseClicked
         // TODO add your handling code here:
-        int row = jTable1.getSelectedRow();
+        int row = ComicTable.getSelectedRow();
                 if (row != -1) {
                     // Lấy ID của truyện từ hàng được chọn (sử dụng row index để lấy Comic)
                     Comic comic = comicList.get(row); // Lấy đối tượng Comic từ danh sách
@@ -431,7 +428,7 @@ public class Home extends javax.swing.JFrame {
                     ComicDetail comicDetail = new ComicDetail(this, comic.getComicID());
                     comicDetail.setVisible(true);
                 }
-    }//GEN-LAST:event_jTable1MouseClicked
+    }//GEN-LAST:event_ComicTableMouseClicked
 
     /**
      * @param args the command line arguments
@@ -476,13 +473,13 @@ public class Home extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable ComicTable;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lbHistory;
     private javax.swing.JLabel lbHome;
     private javax.swing.JLabel lbLibrary;

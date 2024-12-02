@@ -1,0 +1,109 @@
+1;1;Romance Dawn
+1;2;They Call Him Straw Hat Luffy
+1;3;The Pirate King
+1;4;The Grand Line
+1;5;The Straw Hat Crew
+1;6;Arlong Park
+1;7;The Coming of the War
+1;8;East Blue's Most Wanted
+1;9;The Reunion of Friends
+1;10;The Straw Hat Fleet
+
+2;1;Enter Naruto Uzumaki
+2;2;The Hokage's Successor
+2;3;Sasuke's Departure
+2;4;Naruto's Shadow
+2;5;The Chunin Exams
+2;6;The Curse of Itachi
+2;7;The Bell Test
+2;8;Return of the Legendary Ninja
+2;9;The Great Ninja War
+2;10;Sasuke's Awakening
+
+3;1;The Fall of Shiganshina
+3;2;The Battle for Trost
+3;3;The Female Titan
+3;4;The Clash of the Titans
+3;5;The War Begins
+3;6;The Iron Wall
+3;7;Betrayal in the Walls
+3;8;The Return to Shiganshina
+3;9;The Attack on Marley
+3;10;The Final Battle
+
+4;1;The Arrival of Goku
+4;2;The Tournament Begins
+4;3;The Fight Against the Red Ribbon Army
+4;4;The Arrival of Piccolo
+4;5;The Battle with Frieza
+4;6;The Birth of Super Saiyan
+4;7;The Androids Appear
+4;8;The Arrival of Majin Buu
+4;9;The Fusion Dance
+4;10;The Defeat of Majin Buu
+
+5;1;The Notebook Falls to Earth
+5;2;Kira's Power
+5;3;L's Suspicion
+5;4;The Hunt Begins
+5;5;The First Face-off
+5;6;The Secret of the Death Note
+5;7;The Investigation Deepens
+5;8;L's Strategy
+5;9;Kira's True Identity
+5;10;The Final Showdown
+
+6;1;The Substitute Shinigami
+6;2;Ichigo's Bankai
+6;3;The Soul Society Arc
+6;4;The Battle of the Soul Society
+6;5;The Hueco Mundo Saga
+6;6;The Arrancar
+6;7;The Espada
+6;8;The Thousand-Year Blood War
+6;9;The Lost Substitute Shinigami
+6;10;Final Getsuga Tensho
+
+7;1;The Demon Slayer Corps
+7;2;The Journey to Mount Fujikasane
+7;3;The Battle Against the Demons
+7;4;The Hashira's Power
+7;5;The Fight with Rui
+7;6;The Secrets of the Demon Slayer
+7;7;The Final Selection
+7;8;The Battle with Muzan Kibutsuji
+7;9;The Hashira's Sacrifice
+7;10;The Last Stand
+
+8;1;Izuku Midoriya's Dream
+8;2;The Birth of a Hero
+8;3;The Hero Killer Stain
+8;4;The Sports Festival
+8;5;The Internship Begins
+8;6;The League of Villains
+8;7;The U.A. vs Villains Battle
+8;8;The Pro Hero's Challenge
+8;9;The Final Exam
+8;10;The War Begins
+
+9;1;The Arrival of Mikey
+9;2;The Brawl at Toman
+9;3;The Past and the Future
+9;4;The Rise of the Tokyo Manji Gang
+9;5;The Fateful Fight
+9;6;The Changing of Fate
+9;7;The Revenge Begins
+9;8;The Underworld of Tokyo
+9;9;The Tragic Deaths
+9;10;The Final Confrontation
+
+10;1;The Awakening of Yuji Itadori
+10;2;The Curse of Sukuna
+10;3;The Cursed Spirit
+10;4;The Fight Against the Cursed Spirits
+10;5;The Domain Expansion
+10;6;The Return of Satoru Gojo
+10;7;The Battle Against Mahito
+10;8;The Shibuya Incident
+10;9;The Dark Past of Sukuna
+10;10;The Final Curse Battle

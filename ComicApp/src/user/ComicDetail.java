@@ -2,6 +2,7 @@ package user;
 
 import Model.Comic;
 import Model.Library;
+import Model.Chapter;
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -23,7 +24,10 @@ public class ComicDetail extends javax.swing.JFrame {
     private static final String LIBRARY_FILE = "LIBRARY.TXT";
 
     private List<Comic> comicList;
-    private static final String FILE_NAME_COMIC = "COMIC.TXT";
+    private static final String COMIC_FILE = "COMIC.TXT";
+    
+    private List<Chapter> chapterList;
+    private static final String CHAPTER_FILE = "CHAPTER.TXT";
 
     private String comicId;
     private Home home;
@@ -40,8 +44,10 @@ public class ComicDetail extends javax.swing.JFrame {
         this.comicId = comicID;
         setLbComicIcon();
         LoadComicsFromFile();
+        LoadChaptersFromFile();
         LoadLibraryFromFile();
         displayComicInfo();
+        LoadChaptersToTable();
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -53,7 +59,7 @@ public class ComicDetail extends javax.swing.JFrame {
 
     /* */
     private void LoadComicsFromFile() {
-        File file = new File(FILE_NAME_COMIC);
+        File file = new File(COMIC_FILE);
         try {
             if (!file.exists()) {
                 file.createNewFile();
@@ -63,7 +69,7 @@ public class ComicDetail extends javax.swing.JFrame {
         }
 
         if (file.length() > 0) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME_COMIC))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(COMIC_FILE))) {
                 String line;
                 comicList = new ArrayList<>();
                 while ((line = reader.readLine()) != null) {
@@ -90,6 +96,48 @@ public class ComicDetail extends javax.swing.JFrame {
             System.out.println("Không có dữ liệu trong file.");
         }
     }
+
+private void LoadChaptersFromFile() {
+    File file = new File(CHAPTER_FILE);
+    try {
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    if (file.length() > 0) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(CHAPTER_FILE))) {
+            String line;
+            chapterList = new ArrayList<>();
+            while ((line = reader.readLine()) != null) {
+                String[] chapterData = line.split(";"); // Assuming data is separated by ";"
+                if (chapterData.length >= 3) {
+                    try {
+                        // Adjust to parse comicID, chapterNumber, and chapterTitle
+                        String comicID = chapterData[0].trim(); // First part is comicID
+                        int chapterNumber = Integer.parseInt(chapterData[1].trim()); // Second part is chapterNumber
+                        String chapterTitle = chapterData[2].trim(); // Third part is chapterTitle
+
+                        Chapter chapter = new Chapter(comicID, chapterNumber, chapterTitle);
+                        chapterList.add(chapter);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Skipping invalid chapter line: " + line);
+                    }
+                }
+            }
+            System.out.println("Loaded " + chapterList.size() + " chapters.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } else {
+        chapterList = new ArrayList<>();
+        System.out.println("No data in chapter file.");
+    }
+}
+
+
 
     private void LoadLibraryFromFile() {
         File file = new File(LIBRARY_FILE);
@@ -150,6 +198,34 @@ public class ComicDetail extends javax.swing.JFrame {
         lbCategory.setText("Category: " + selectedComic.getComicCategory());
         lbStatus.setText("Status: " + selectedComic.getComicStatus());
     }
+    
+    private List<Chapter> findChaptersByComicID(String comicID, List<Chapter> chapterList) {
+        List<Chapter> selectedChapters = new ArrayList<>();
+        for (Chapter chapter : chapterList) {
+            if (chapter.getComicID().equals(comicID)) {
+                selectedChapters.add(chapter); // Thêm chương vào danh sách nếu comicID trùng
+            }
+        }
+        return selectedChapters; // Trả về danh sách các chương
+    }
+
+private void LoadChaptersToTable() {
+    // Lấy mô hình của JTable
+    DefaultTableModel model = (DefaultTableModel) ChapterTable.getModel();
+    // Xóa dữ liệu cũ trong bảng
+    model.setRowCount(0);
+
+    // Lọc các chương theo comicID
+    List<Chapter> selectedChapters = findChaptersByComicID(comicId, chapterList);
+
+    // Lặp qua danh sách các chapter đã lọc và thêm vào bảng
+    for (int i = 0; i < selectedChapters.size(); i++) {
+        Chapter chapter = selectedChapters.get(i);
+        // Thêm dòng mới vào bảng với số chương và tiêu đề
+        model.addRow(new Object[]{chapter.getChapterNumber(), chapter.getTitle()});
+    }
+}
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -164,7 +240,7 @@ public class ComicDetail extends javax.swing.JFrame {
         lbNChapters = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        ChapterTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -217,16 +293,19 @@ public class ComicDetail extends javax.swing.JFrame {
                         .addComponent(lbName)
                         .addComponent(lbStatus))
                     .addComponent(lbComicIcon))
-                .addGap(38, 38, 38)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbCategory)
-                    .addComponent(lbNChapters))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(lbCategory))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(lbNChapters)))
+                .addGap(17, 17, 17)
                 .addComponent(lbAuthor)
-                .addGap(36, 36, 36))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        ChapterTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -245,11 +324,11 @@ public class ComicDetail extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setResizable(false);
-            jTable1.getColumnModel().getColumn(1).setResizable(false);
+        ChapterTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(ChapterTable);
+        if (ChapterTable.getColumnModel().getColumnCount() > 0) {
+            ChapterTable.getColumnModel().getColumn(0).setResizable(false);
+            ChapterTable.getColumnModel().getColumn(1).setResizable(false);
         }
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -263,8 +342,7 @@ public class ComicDetail extends javax.swing.JFrame {
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -340,10 +418,10 @@ public class ComicDetail extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable ChapterTable;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lbAuthor;
     private javax.swing.JLabel lbCategory;
     private javax.swing.JLabel lbComicIcon;
