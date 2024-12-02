@@ -281,6 +281,9 @@
                   <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ComicTableMouseClicked"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if (ComicTable.getColumnModel().getColumnCount() &gt; 0) {&#xa;    ComicTable.getColumnModel().getColumn(0).setResizable(false);&#xa;    ComicTable.getColumnModel().getColumn(1).setResizable(false);&#xa;    ComicTable.getColumnModel().getColumn(2).setResizable(false);&#xa;    ComicTable.getColumnModel().getColumn(3).setResizable(false);&#xa;    ComicTable.getColumnModel().getColumn(4).setResizable(false);&#xa;}"/>
               </AuxValues>

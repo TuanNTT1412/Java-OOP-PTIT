@@ -33,14 +33,6 @@ public class Home extends javax.swing.JFrame {
 
     private User user;
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public Home() {
         initComponents();
         setLocationRelativeTo(null);
@@ -410,13 +402,13 @@ public class Home extends javax.swing.JFrame {
     private void lbHistoryMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHistoryMouseEntered
 
         lbHistory.setBackground(Color.LIGHT_GRAY);
-        lbHistory.setOpaque(true); 
+        lbHistory.setOpaque(true);
     }//GEN-LAST:event_lbHistoryMouseEntered
 
     private void lbHistoryMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHistoryMouseExited
 
         lbHistory.setBackground(null);
-        lbHistory.setOpaque(false); 
+        lbHistory.setOpaque(false);
     }//GEN-LAST:event_lbHistoryMouseExited
 
     private void ComicTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ComicTableMouseClicked

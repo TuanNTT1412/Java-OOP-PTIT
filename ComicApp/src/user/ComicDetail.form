@@ -224,6 +224,9 @@
                   <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ChapterTableMouseClicked"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="if (ChapterTable.getColumnModel().getColumnCount() &gt; 0) {&#xa;    ChapterTable.getColumnModel().getColumn(0).setResizable(false);&#xa;    ChapterTable.getColumnModel().getColumn(1).setResizable(false);&#xa;}"/>
               </AuxValues>

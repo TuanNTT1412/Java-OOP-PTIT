@@ -56,6 +56,7 @@ public class LibraryDetail extends javax.swing.JFrame {
             }
         });
     }
+
     private void LoadComicsFromFile() {
         File file = new File(COMIC_FILE);
         try {
@@ -95,26 +96,25 @@ public class LibraryDetail extends javax.swing.JFrame {
         }
     }
 
-private void LoadComicsToTable() {
-    DefaultTableModel model = (DefaultTableModel) ComicTable.getModel();
-    model.setRowCount(0);
+    private void LoadComicsToTable() {
+        DefaultTableModel model = (DefaultTableModel) ComicTable.getModel();
+        model.setRowCount(0);
 
-    List<String> userLibrary = getUserLibrary();
+        List<String> userLibrary = getUserLibrary();
 
-    List<Object[]> comicDetails = getComicDetails(userLibrary);
+        List<Object[]> comicDetails = getComicDetails(userLibrary);
 
-    for (int i = 0; i < comicDetails.size(); i++) {
-        Object[] comicData = comicDetails.get(i);
-        model.addRow(new Object[]{
-            i + 1,
-            comicData[1],
-            comicData[2],
-            comicData[3],
-            comicData[4]
-        });
+        for (int i = 0; i < comicDetails.size(); i++) {
+            Object[] comicData = comicDetails.get(i);
+            model.addRow(new Object[]{
+                i + 1,
+                comicData[1],
+                comicData[2],
+                comicData[3],
+                comicData[4]
+            });
+        }
     }
-}
-
 
     private void LoadHistoryFromFile() {
         File file = new File(HISTORY_FILE);
@@ -187,18 +187,17 @@ private void LoadComicsToTable() {
         lbMyAccount.setText(user.getUsername());
     }
 
-        
-private List<String> getUserLibrary() {
-    List<String> userLibrary = new ArrayList<>();
+    private List<String> getUserLibrary() {
+        List<String> userLibrary = new ArrayList<>();
 
-    for (Library library : libraryList) {
-        if (library.getUserID().equals(String.valueOf(user.getUserID()))) {
-            userLibrary.addAll(library.getFollowedComicIDs());
-            break;
+        for (Library library : libraryList) {
+            if (library.getUserID().equals(String.valueOf(user.getUserID()))) {
+                userLibrary.addAll(library.getFollowedComicIDs());
+                break;
+            }
         }
+        return userLibrary;
     }
-    return userLibrary;
-}
 
     private List<Object[]> getComicDetails(List<String> comicIds) {
         List<Object[]> comicDetails = new ArrayList<>();
@@ -216,6 +215,14 @@ private List<String> getUserLibrary() {
         return comicDetails;
     }
 
+    private Comic findComicByName(String comicTitle) {
+        for (Comic comic : comicList) {
+            if (comic.getComicName().equals(comicTitle)) {
+                return comic;
+            }
+        }
+        return null;
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -364,6 +371,11 @@ private List<String> getUserLibrary() {
             }
         });
         ComicTable.getTableHeader().setReorderingAllowed(false);
+        ComicTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ComicTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(ComicTable);
         if (ComicTable.getColumnModel().getColumnCount() > 0) {
             ComicTable.getColumnModel().getColumn(0).setResizable(false);
@@ -423,7 +435,7 @@ private List<String> getUserLibrary() {
 
     private void lbHistoryMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHistoryMouseExited
 
-        lbHistory.setBackground(null); 
+        lbHistory.setBackground(null);
         lbHistory.setOpaque(false);
     }//GEN-LAST:event_lbHistoryMouseExited
 
@@ -444,6 +456,25 @@ private List<String> getUserLibrary() {
         lbHome.setBackground(null);
         lbHome.setOpaque(false);
     }//GEN-LAST:event_lbHomeMouseExited
+
+    private void ComicTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ComicTableMouseClicked
+
+        int row = ComicTable.getSelectedRow();
+
+        if (row != -1) {
+
+            String comicTitle = (String) ComicTable.getValueAt(row, 1);
+
+            Comic selectedComic = findComicByName(comicTitle);
+
+            if (selectedComic != null) {
+                ComicDetail comicDetail = new ComicDetail(user, home, selectedComic.getComicID());
+                comicDetail.setVisible(true);
+            } else {
+                System.out.println("Comic not found!");
+            }
+        }
+    }//GEN-LAST:event_ComicTableMouseClicked
 
     public static void main(String args[]) {
         //</editor-fold>

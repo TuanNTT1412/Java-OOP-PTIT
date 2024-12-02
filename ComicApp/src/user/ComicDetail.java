@@ -173,7 +173,7 @@ public class ComicDetail extends javax.swing.JFrame {
         }
     }
 
-        private void writeLibraryToFile() {
+    private void writeLibraryToFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(LIBRARY_FILE, false))) {
             for (Library library : libraryList) {
                 StringBuilder sb = new StringBuilder();
@@ -188,7 +188,7 @@ public class ComicDetail extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-    
+
     public void setLbComicIcon() {
         String fileIconPath = "ComicImage/" + comicId + "/icon.png";
         java.io.File imgFile = new java.io.File(fileIconPath);
@@ -200,9 +200,9 @@ public class ComicDetail extends javax.swing.JFrame {
         }
     }
 
-    private Comic findComicByID(String comicID) {
+    private Comic findComicByID() {
         for (Comic comic : comicList) {
-            if (comic.getComicID().equals(comicID)) {
+            if (comic.getComicID().equals(comicId)) {
                 return comic;
             }
         }
@@ -210,17 +210,19 @@ public class ComicDetail extends javax.swing.JFrame {
     }
 
     private void displayComicInfo() {
-        Comic selectedComic = findComicByID(comicId);
+        Comic selectedComic = findComicByID();
+        List<Chapter> selectedChapter = findChaptersByComicID();
         lbName.setText("Title: " + selectedComic.getComicName());
         lbAuthor.setText("Author: " + selectedComic.getComicAuthor());
         lbCategory.setText("Category: " + selectedComic.getComicCategory());
         lbStatus.setText("Status: " + selectedComic.getComicStatus());
+        lbNChapters.setText("Number of Chapters: " + selectedChapter.size());
     }
 
-    private List<Chapter> findChaptersByComicID(String comicID, List<Chapter> chapterList) {
+    private List<Chapter> findChaptersByComicID() {
         List<Chapter> selectedChapters = new ArrayList<>();
         for (Chapter chapter : chapterList) {
-            if (chapter.getComicID().equals(comicID)) {
+            if (chapter.getComicID().equals(comicId)) {
                 selectedChapters.add(chapter);
             }
         }
@@ -243,41 +245,40 @@ public class ComicDetail extends javax.swing.JFrame {
     }
 
     public void updateLibraryData(boolean isFollow) {
-    boolean isUserFound = false;
-    for (Library library : libraryList) {
-        if (library.getUserID().equals(user.getUserID())) {
-            isUserFound = true;
-            Set<String> comicIDs = library.getFollowedComicIDs();
+        boolean isUserFound = false;
+        for (Library library : libraryList) {
+            if (library.getUserID().equals(user.getUserID())) {
+                isUserFound = true;
+                Set<String> comicIDs = library.getFollowedComicIDs();
 
+                if (isFollow) {
+                    comicIDs.add(comicId);
+                } else {
+                    comicIDs.remove(comicId);
+                }
+
+                library.setFollowedComicIDs(comicIDs);
+                break;
+            }
+        }
+
+        if (!isUserFound) {
+            Set<String> comicIDs = new HashSet<>();
             if (isFollow) {
                 comicIDs.add(comicId);
-            } else {
-                comicIDs.remove(comicId);
             }
-
-            library.setFollowedComicIDs(comicIDs);
-            break;
+            Library newLibrary = new Library(user.getUserID(), comicIDs);
+            libraryList.add(newLibrary);
         }
+
+        writeLibraryToFile();
     }
 
-    if (!isUserFound) {
-        Set<String> comicIDs = new HashSet<>();
-        if (isFollow) {
-            comicIDs.add(comicId);
-        }
-        Library newLibrary = new Library(user.getUserID(), comicIDs);
-        libraryList.add(newLibrary);
-    }
-
-    writeLibraryToFile();
-}
-
-    
     private void LoadChaptersToTable() {
         DefaultTableModel model = (DefaultTableModel) ChapterTable.getModel();
         model.setRowCount(0);
 
-        List<Chapter> selectedChapters = findChaptersByComicID(comicId, chapterList);
+        List<Chapter> selectedChapters = findChaptersByComicID();
 
         for (int i = 0; i < selectedChapters.size(); i++) {
             Chapter chapter = selectedChapters.get(i);
@@ -395,6 +396,11 @@ public class ComicDetail extends javax.swing.JFrame {
             }
         });
         ChapterTable.getTableHeader().setReorderingAllowed(false);
+        ChapterTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ChapterTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(ChapterTable);
         if (ChapterTable.getColumnModel().getColumnCount() > 0) {
             ChapterTable.getColumnModel().getColumn(0).setResizable(false);
@@ -450,24 +456,21 @@ public class ComicDetail extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnFollowActionPerformed
 
+    private void ChapterTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ChapterTableMouseClicked
+
+        int row = ChapterTable.getSelectedRow();
+
+        if (row >= 0) {
+
+            String chapterNumber = ChapterTable.getValueAt(row, 0).toString();
+
+            String chapterTitle = ChapterTable.getValueAt(row, 1).toString();
+
+            new ChapterDetail(this, home, comicId, chapterNumber).setVisible(true);
+        }
+    }//GEN-LAST:event_ChapterTableMouseClicked
 
     public static void main(String args[]) {
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(ComicDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(ComicDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(ComicDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(ComicDetail.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
