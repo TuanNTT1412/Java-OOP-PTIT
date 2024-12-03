@@ -190,6 +190,8 @@ public class Home extends javax.swing.JFrame {
         lbLibrary = new javax.swing.JLabel();
         lbHistory = new javax.swing.JLabel();
         lbMyAccount = new javax.swing.JLabel();
+        txtSearch = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         ComicTable = new javax.swing.JTable();
@@ -278,6 +280,15 @@ public class Home extends javax.swing.JFrame {
         lbMyAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/My Account.png"))); // NOI18N
         lbMyAccount.setText("My Account");
 
+        txtSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSearchActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search.png"))); // NOI18N
+        jLabel2.setText("jLabel2");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -289,7 +300,11 @@ public class Home extends javax.swing.JFrame {
                 .addComponent(lbLibrary)
                 .addGap(30, 30, 30)
                 .addComponent(lbHistory)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 346, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 135, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(lbMyAccount)
                 .addGap(65, 65, 65))
         );
@@ -297,12 +312,17 @@ public class Home extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbHistory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lbLibrary, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(lbMyAccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbMyAccount, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lbLibrary, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lbHistory, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel2)))
+                        .addContainerGap())))
         );
 
         ComicTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -427,6 +447,26 @@ public class Home extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_ComicTableMouseClicked
 
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+        String keyword = txtSearch.getText().trim().toLowerCase(); // Lấy từ khóa tìm kiếm, bỏ khoảng trắng, chuyển về chữ thường
+        DefaultTableModel model = (DefaultTableModel) ComicTable.getModel();
+
+        if (keyword.isEmpty()) {
+            LoadComicsToTable();
+            return;
+        }
+
+        model.setRowCount(0);
+        for (int i = 0; i < comicList.size(); i++) {
+            Comic comic = comicList.get(i);
+            if (comic.getComicName().toLowerCase().contains(keyword)
+                    || comic.getComicAuthor().toLowerCase().contains(keyword)
+                    || comic.getComicCategory().toLowerCase().contains(keyword)) {
+                model.addRow(new Object[]{i + 1, comic.getComicName(), comic.getComicAuthor(), comic.getComicCategory(), comic.getComicStatus()});
+            }
+        }
+    }//GEN-LAST:event_txtSearchActionPerformed
+
     public static void main(String args[]) {
         //</editor-fold>
         //</editor-fold>
@@ -446,6 +486,7 @@ public class Home extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable ComicTable;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -455,5 +496,6 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel lbHome;
     private javax.swing.JLabel lbLibrary;
     private javax.swing.JLabel lbMyAccount;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }
