@@ -277,6 +277,7 @@ public class ChapterDetail extends javax.swing.JFrame {
 
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
         home.setVisible(true);
+        comicDetail.dispose();
         this.dispose();
     }//GEN-LAST:event_btnHomeActionPerformed
 
