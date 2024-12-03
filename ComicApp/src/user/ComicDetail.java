@@ -21,7 +21,7 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
-public class ComicDetail extends javax.swing.JFrame {
+public class ComicDetail extends javax.swing.JFrame implements FileOperations {
 
     private List<History> historyList;
     private static final String HISTORY_FILE = "HISTORY.TXT";
@@ -37,6 +37,8 @@ public class ComicDetail extends javax.swing.JFrame {
 
     private String comicId;
     private Home home;
+    private LibraryDetail libraryDetail;
+    private HistoryDetail historyDetail;
     private User user;
 
     public ComicDetail() {
@@ -44,12 +46,14 @@ public class ComicDetail extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
 
-    public ComicDetail(User user, Home home, String comicID) {
-        initComponents();
-        setLocationRelativeTo(null);
+    private void initialize(User user, Home home, LibraryDetail libraryDetail, HistoryDetail historyDetail, String comicID) {
         this.user = user;
         this.home = home;
+        this.libraryDetail = libraryDetail;
+        this.historyDetail = historyDetail;
         this.comicId = comicID;
+
+        // Các thao tác chung cho tất cả constructors
         setLbComicIcon();
         LoadComicsFromFile();
         LoadChaptersFromFile();
@@ -58,6 +62,7 @@ public class ComicDetail extends javax.swing.JFrame {
         displayComicInfo();
         checkFollowStatus();
         LoadChaptersToTable();
+
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -67,8 +72,23 @@ public class ComicDetail extends javax.swing.JFrame {
         });
     }
 
+    public ComicDetail(User user, Home home, String comicID) {
+        this();
+        initialize(user, home, null, null, comicID);
+    }
+
+    public ComicDetail(User user, Home home, LibraryDetail libraryDetail, String comicID) {
+        this();
+        initialize(user, home, libraryDetail, null, comicID);
+    }
+
+    public ComicDetail(User user, Home home, HistoryDetail historyDetail, String comicID) {
+        this();
+        initialize(user, home, null, historyDetail, comicID);
+    }
+
     /* */
-    private void LoadComicsFromFile() {
+    public void LoadComicsFromFile() {
         File file = new File(COMIC_FILE);
         try {
             if (!file.exists()) {
@@ -107,7 +127,7 @@ public class ComicDetail extends javax.swing.JFrame {
         }
     }
 
-    private void LoadChaptersFromFile() {
+    public void LoadChaptersFromFile() {
         File file = new File(CHAPTER_FILE);
         try {
             if (!file.exists()) {
@@ -146,7 +166,7 @@ public class ComicDetail extends javax.swing.JFrame {
         }
     }
 
-    private void LoadHistoryFromFile() {
+    public void LoadHistoryFromFile() {
         File file = new File(HISTORY_FILE);
         try {
             if (!file.exists()) {
@@ -181,7 +201,7 @@ public class ComicDetail extends javax.swing.JFrame {
         }
     }
 
-    private void writeHistoryToFile() {
+    public void writeHistoryToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(HISTORY_FILE, false))) {
             for (History history : historyList) {
                 StringBuilder line = new StringBuilder();
@@ -203,7 +223,7 @@ public class ComicDetail extends javax.swing.JFrame {
         }
     }
 
-    private void LoadLibraryFromFile() {
+    public void LoadLibraryFromFile() {
         File file = new File(LIBRARY_FILE);
         try {
             if (!file.exists()) {
@@ -235,7 +255,7 @@ public class ComicDetail extends javax.swing.JFrame {
         }
     }
 
-    private void writeLibraryToFile() {
+    public void writeLibraryToFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(LIBRARY_FILE, false))) {
             for (Library library : libraryList) {
                 StringBuilder sb = new StringBuilder();
@@ -373,6 +393,16 @@ public class ComicDetail extends javax.swing.JFrame {
             Chapter chapter = selectedChapters.get(i);
             model.addRow(new Object[]{chapter.getChapterNumber(), chapter.getTitle()});
         }
+    }
+
+    @Override
+    public void LoadUsersFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void WriteUsersToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @SuppressWarnings("unchecked")
@@ -554,10 +584,16 @@ public class ComicDetail extends javax.swing.JFrame {
             String chapterNumber = ChapterTable.getValueAt(row, 0).toString();
 
             String chapterTitle = ChapterTable.getValueAt(row, 1).toString();
-            
+
             addComicToHistory();
 
-            new ChapterDetail(this, home, comicId, chapterNumber).setVisible(true);
+            if (historyDetail != null) {
+                new ChapterDetail(this, home, historyDetail, comicId, chapterNumber).setVisible(true);
+            } else if (libraryDetail != null) {
+                new ChapterDetail(this, home, libraryDetail, comicId, chapterNumber).setVisible(true);
+            } else {
+                new ChapterDetail(this, home, comicId, chapterNumber).setVisible(true);
+            }
         }
     }//GEN-LAST:event_ChapterTableMouseClicked
 

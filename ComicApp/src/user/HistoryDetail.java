@@ -18,7 +18,7 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
-public class HistoryDetail extends javax.swing.JFrame {
+public class HistoryDetail extends javax.swing.JFrame implements FileOperations {
 
     private List<History> historyList;
     private static final String HISTORY_FILE = "HISTORY.TXT";
@@ -53,7 +53,7 @@ public class HistoryDetail extends javax.swing.JFrame {
         });
     }
 
-    private void LoadComicsFromFile() {
+    public void LoadComicsFromFile() {
         File file = new File(COMIC_FILE);
         try {
             if (!file.exists()) {
@@ -92,28 +92,27 @@ public class HistoryDetail extends javax.swing.JFrame {
         }
     }
 
-private void LoadComicsToTable() {
-    DefaultTableModel model = (DefaultTableModel) ComicTable.getModel();
-    model.setRowCount(0);
+    private void LoadComicsToTable() {
+        DefaultTableModel model = (DefaultTableModel) ComicTable.getModel();
+        model.setRowCount(0);
 
-    List<String> userHistory = getUserHistory();
+        List<String> userHistory = getUserHistory();
 
-    List<Object[]> comicDetails = getComicDetails(userHistory);
+        List<Object[]> comicDetails = getComicDetails(userHistory);
 
-    for (int i = 0; i < comicDetails.size(); i++) {
-        Object[] comicData = comicDetails.get(i);
-        model.addRow(new Object[]{
-            i + 1,       
-            comicData[1],   
-            comicData[4],     
-            comicData[3],       
-            comicData[2]  
-        });
+        for (int i = 0; i < comicDetails.size(); i++) {
+            Object[] comicData = comicDetails.get(i);
+            model.addRow(new Object[]{
+                i + 1,
+                comicData[1],
+                comicData[4],
+                comicData[3],
+                comicData[2]
+            });
+        }
     }
-}
 
-
-    private void LoadHistoryFromFile() {
+    public void LoadHistoryFromFile() {
         File file = new File(HISTORY_FILE);
         try {
             if (!file.exists()) {
@@ -148,7 +147,6 @@ private void LoadComicsToTable() {
         }
     }
 
-
     public void setLbMyAccountText() {
         lbMyAccount.setText(user.getUsername());
     }
@@ -164,7 +162,6 @@ private void LoadComicsToTable() {
         }
         return userHistory;
     }
-
 
     private List<Object[]> getComicDetails(List<String> comicIds) {
         List<Object[]> comicDetails = new ArrayList<>();
@@ -189,6 +186,36 @@ private void LoadComicsToTable() {
             }
         }
         return null;
+    }
+
+    @Override
+    public void LoadUsersFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void LoadLibraryFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void LoadChaptersFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void WriteUsersToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void writeLibraryToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void writeHistoryToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @SuppressWarnings("unchecked")
@@ -399,7 +426,7 @@ private void LoadComicsToTable() {
             Comic selectedComic = findComicByName(comicTitle);
 
             if (selectedComic != null) {
-                ComicDetail comicDetail = new ComicDetail(user, home, selectedComic.getComicID());
+                ComicDetail comicDetail = new ComicDetail(user, home, this, selectedComic.getComicID());
                 comicDetail.setVisible(true);
             } else {
                 System.out.println("Comic not found!");

@@ -18,7 +18,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-public class ChapterDetail extends javax.swing.JFrame {
+public class ChapterDetail extends javax.swing.JFrame implements FileOperations {
 
     private List<History> historyList;
     private static final String HISTORY_FILE = "HISTORY.TXT";
@@ -28,6 +28,8 @@ public class ChapterDetail extends javax.swing.JFrame {
 
     private ComicDetail comicDetail;
     private Home home;
+    private LibraryDetail libraryDetail;
+    private HistoryDetail historyDetail;
     private String comicId;
     private String chapterNumber;
 
@@ -36,27 +38,46 @@ public class ChapterDetail extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
 
-    public ChapterDetail(ComicDetail comicDetail, Home home, String comicId, String chapterNumber) {
-        this();
+    private void initChapterDetail(ComicDetail comicDetail, Home home, LibraryDetail libraryDetail, HistoryDetail historyDetail, String comicId, String chapterNumber) {
         this.comicDetail = comicDetail;
         this.home = home;
+        this.libraryDetail = libraryDetail;
+        this.historyDetail = historyDetail;
         this.comicId = comicId;
         this.chapterNumber = chapterNumber;
+
         LoadComicsFromFile();
         LoadHistoryFromFile();
         displayChapterImage();
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        this.addWindowListener(new WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 ChapterDetail.this.setVisible(false);
-                comicDetail.setVisible(true);
+                if (comicDetail != null) {
+                    comicDetail.setVisible(true);
+                }
             }
         });
     }
 
-    private void LoadComicsFromFile() {
+    public ChapterDetail(ComicDetail comicDetail, Home home, String comicId, String chapterNumber) {
+        this();
+        initChapterDetail(comicDetail, home, null, null, comicId, chapterNumber);
+    }
+
+    public ChapterDetail(ComicDetail comicDetail, Home home, LibraryDetail libraryDetail, String comicId, String chapterNumber) {
+        this();
+        initChapterDetail(comicDetail, home, libraryDetail, null, comicId, chapterNumber);
+    }
+
+    public ChapterDetail(ComicDetail comicDetail, Home home, HistoryDetail historyDetail, String comicId, String chapterNumber) {
+        this();
+        initChapterDetail(comicDetail, home, null, historyDetail, comicId, chapterNumber);
+    }
+
+    public void LoadComicsFromFile() {
         File file = new File(COMIC_FILE);
         try {
             if (!file.exists()) {
@@ -95,7 +116,7 @@ public class ChapterDetail extends javax.swing.JFrame {
         }
     }
 
-    private void LoadHistoryFromFile() {
+    public void LoadHistoryFromFile() {
         File file = new File(HISTORY_FILE);
         try {
             if (!file.exists()) {
@@ -155,6 +176,36 @@ public class ChapterDetail extends javax.swing.JFrame {
         }
     }
 
+    @Override
+    public void LoadUsersFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void LoadLibraryFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void LoadChaptersFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void WriteUsersToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void writeLibraryToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void writeHistoryToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -177,6 +228,7 @@ public class ChapterDetail extends javax.swing.JFrame {
                 btnPreActionPerformed(evt);
             }
         });
+        jPanel1.add(btnPre);
 
         btnHome.setText("HOME");
         btnHome.addActionListener(new java.awt.event.ActionListener() {
@@ -184,6 +236,7 @@ public class ChapterDetail extends javax.swing.JFrame {
                 btnHomeActionPerformed(evt);
             }
         });
+        jPanel1.add(btnHome);
 
         btnNext.setText("Next");
         btnNext.addActionListener(new java.awt.event.ActionListener() {
@@ -191,30 +244,7 @@ public class ChapterDetail extends javax.swing.JFrame {
                 btnNextActionPerformed(evt);
             }
         });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(btnPre)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 392, Short.MAX_VALUE)
-                .addComponent(btnHome)
-                .addGap(372, 372, 372)
-                .addComponent(btnNext)
-                .addGap(32, 32, 32))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnPre)
-                    .addComponent(btnHome)
-                    .addComponent(btnNext))
-                .addContainerGap(58, Short.MAX_VALUE))
-        );
+        jPanel1.add(btnNext);
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -226,7 +256,7 @@ public class ChapterDetail extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chapterIMG, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(chapterIMG, javax.swing.GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrollChapter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -235,7 +265,7 @@ public class ChapterDetail extends javax.swing.JFrame {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollChapter, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+                    .addComponent(scrollChapter, javax.swing.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
                     .addComponent(chapterIMG, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -244,16 +274,14 @@ public class ChapterDetail extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -267,15 +295,29 @@ public class ChapterDetail extends javax.swing.JFrame {
         File prevImgFile = new File(prevImagePath);
 
         if (prevImgFile.exists()) {
-            ChapterDetail prevChapterDetail = new ChapterDetail(comicDetail, home, comicId, String.valueOf(prevChapter));
-            prevChapterDetail.setVisible(true);
-            this.dispose();
+            if (historyDetail != null) {
+                new ChapterDetail(comicDetail, home, historyDetail, comicId, String.valueOf(prevChapter)).setVisible(true);
+                this.dispose();
+            } else if (libraryDetail != null) {
+                new ChapterDetail(comicDetail, home, libraryDetail, comicId, String.valueOf(prevChapter)).setVisible(true);
+                this.dispose();
+            } else {
+                new ChapterDetail(comicDetail, home, comicId, String.valueOf(prevChapter)).setVisible(true);
+                this.dispose();
+            }
         } else {
             JOptionPane.showMessageDialog(this, "No previous chapter available.", "Warning", javax.swing.JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnPreActionPerformed
 
     private void btnHomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHomeActionPerformed
+        if (libraryDetail != null && libraryDetail.isVisible()) {
+            libraryDetail.dispose();
+        }
+
+        if (historyDetail != null && historyDetail.isVisible()) {
+            historyDetail.dispose();
+        }
         home.setVisible(true);
         comicDetail.dispose();
         this.dispose();

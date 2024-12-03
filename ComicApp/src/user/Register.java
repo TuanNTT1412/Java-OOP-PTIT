@@ -11,7 +11,7 @@ import java.util.*;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-public class Register extends javax.swing.JFrame {
+public class Register extends javax.swing.JFrame implements FileOperations {
 
     private List<User> userList;
     private static final String USER_FILE = "USER.TXT";
@@ -46,7 +46,7 @@ public class Register extends javax.swing.JFrame {
         });
     }
 
-    private void LoadUsersFromFile() {
+    public void LoadUsersFromFile() {
         File file = new File(USER_FILE);
         try {
             if (!file.exists()) {
@@ -75,7 +75,7 @@ public class Register extends javax.swing.JFrame {
         }
     }
 
-    private void LoadHistoryFromFile() {
+    public void LoadHistoryFromFile() {
         File file = new File(HISTORY_FILE);
         try {
             if (!file.exists()) {
@@ -110,7 +110,7 @@ public class Register extends javax.swing.JFrame {
         }
     }
 
-    private void LoadLibraryFromFile() {
+    public void LoadLibraryFromFile() {
         File file = new File(LIBRARY_FILE);
         try {
             if (!file.exists()) {
@@ -168,6 +168,44 @@ public class Register extends javax.swing.JFrame {
             tmp = "1";
         }
         return tmp;
+    }
+
+    public boolean isUsernameExist(String username) {
+        if (userList.size() == 0) {
+            return false;
+        } else {
+            for (User user : userList) {
+                if (username.equals(user.getUsername())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void LoadComicsFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void LoadChaptersFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void writeLibraryToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void writeHistoryToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void WriteUsersToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @SuppressWarnings("unchecked")
@@ -362,26 +400,14 @@ public class Register extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnSignUpActionPerformed
 
-    public boolean isUsernameExist(String username) {
-        if (userList.size() == 0) {
-            return false;
-        } else {
-            for (User user : userList) {
-                if (username.equals(user.getUsername())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     private void lbHiddenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHiddenMouseClicked
-        if (txtPassword.getEchoChar() == '*') {
+        if (txtPassword.getEchoChar() == '•') {
             lbHidden.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/show.png")));
             txtPassword.setEchoChar((char) 0);
         } else {
             lbHidden.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hide.png")));
-            txtPassword.setEchoChar('*');
+            txtPassword.setEchoChar('•');
         }
     }//GEN-LAST:event_lbHiddenMouseClicked
 
@@ -401,12 +427,12 @@ public class Register extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCfPasswordActionPerformed
 
     private void lbHidden1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHidden1MouseClicked
-        if (txtCfPassword.getEchoChar() == '*') {
+        if (txtCfPassword.getEchoChar() == '•') {
             lbHidden1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/show.png")));
             txtCfPassword.setEchoChar((char) 0);
         } else {
             lbHidden1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hide.png")));
-            txtCfPassword.setEchoChar('*');
+            txtCfPassword.setEchoChar('•');
         }
     }//GEN-LAST:event_lbHidden1MouseClicked
 

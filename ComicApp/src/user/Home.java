@@ -18,7 +18,7 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
-public class Home extends javax.swing.JFrame {
+public class Home extends javax.swing.JFrame implements FileOperations {
 
     private List<History> historyList;
     private static final String HISTORY_FILE = "HISTORY.TXT";
@@ -58,7 +58,7 @@ public class Home extends javax.swing.JFrame {
         });
     }
 
-    private void LoadComicsFromFile() {
+    public void LoadComicsFromFile() {
         File file = new File(COMIC_FILE);
         try {
             if (!file.exists()) {
@@ -107,7 +107,7 @@ public class Home extends javax.swing.JFrame {
         }
     }
 
-    private void LoadHistoryFromFile() {
+    public void LoadHistoryFromFile() {
         File file = new File(HISTORY_FILE);
         try {
             if (!file.exists()) {
@@ -142,7 +142,7 @@ public class Home extends javax.swing.JFrame {
         }
     }
 
-    private void LoadLibraryFromFile() {
+    public void LoadLibraryFromFile() {
         File file = new File(LIBRARY_FILE);
         try {
             if (!file.exists()) {
@@ -176,6 +176,40 @@ public class Home extends javax.swing.JFrame {
 
     public void setLbMyAccountText() {
         lbMyAccount.setText(user.getUsername());
+    }
+
+    private Comic findComicByName(String comicTitle) {
+        for (Comic comic : comicList) {
+            if (comic.getComicName().equals(comicTitle)) {
+                return comic;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void LoadUsersFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void LoadChaptersFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void WriteUsersToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void writeLibraryToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void writeHistoryToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @SuppressWarnings("unchecked")
@@ -440,15 +474,21 @@ public class Home extends javax.swing.JFrame {
         int row = ComicTable.getSelectedRow();
         if (row != -1) {
 
-            Comic comic = comicList.get(row);
+            String comicTitle = (String) ComicTable.getValueAt(row, 1);
 
-            ComicDetail comicDetail = new ComicDetail(user, this, comic.getComicID());
-            comicDetail.setVisible(true);
+            Comic selectedComic = findComicByName(comicTitle);
+
+            if (selectedComic != null) {
+                ComicDetail comicDetail = new ComicDetail(user, this, selectedComic.getComicID());
+                comicDetail.setVisible(true);
+            } else {
+                System.out.println("Comic not found!");
+            }
         }
     }//GEN-LAST:event_ComicTableMouseClicked
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
-        String keyword = txtSearch.getText().trim().toLowerCase(); // Lấy từ khóa tìm kiếm, bỏ khoảng trắng, chuyển về chữ thường
+        String keyword = txtSearch.getText().trim().toLowerCase();
         DefaultTableModel model = (DefaultTableModel) ComicTable.getModel();
 
         if (keyword.isEmpty()) {
@@ -457,12 +497,14 @@ public class Home extends javax.swing.JFrame {
         }
 
         model.setRowCount(0);
-        for (int i = 0; i < comicList.size(); i++) {
-            Comic comic = comicList.get(i);
+        int displayIndex = 1;
+
+        for (Comic comic : comicList) {
             if (comic.getComicName().toLowerCase().contains(keyword)
                     || comic.getComicAuthor().toLowerCase().contains(keyword)
                     || comic.getComicCategory().toLowerCase().contains(keyword)) {
-                model.addRow(new Object[]{i + 1, comic.getComicName(), comic.getComicAuthor(), comic.getComicCategory(), comic.getComicStatus()});
+                model.addRow(new Object[]{displayIndex, comic.getComicName(), comic.getComicAuthor(), comic.getComicCategory(), comic.getComicStatus()});
+                displayIndex++;
             }
         }
     }//GEN-LAST:event_txtSearchActionPerformed

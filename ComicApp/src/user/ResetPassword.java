@@ -12,7 +12,7 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-public class ResetPassword extends javax.swing.JFrame {
+public class ResetPassword extends javax.swing.JFrame implements FileOperations {
 
     private Login login;
 
@@ -37,7 +37,7 @@ public class ResetPassword extends javax.swing.JFrame {
         });
     }
 
-    private void LoadUsersFromFile() {
+    public void LoadUsersFromFile() {
         File file = new File(USER_FILE);
         try {
             if (!file.exists()) {
@@ -64,6 +64,41 @@ public class ResetPassword extends javax.swing.JFrame {
         } else {
             userList = new ArrayList<>();
         }
+    }
+
+    @Override
+    public void LoadLibraryFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void LoadHistoryFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void LoadComicsFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void LoadChaptersFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void writeLibraryToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void writeHistoryToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void WriteUsersToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @SuppressWarnings("unchecked")
@@ -294,12 +329,12 @@ public class ResetPassword extends javax.swing.JFrame {
     }//GEN-LAST:event_txtUsernameActionPerformed
 
     private void lbHiddenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHiddenMouseClicked
-        if (txtNewPassword.getEchoChar() == '*') {
+        if (txtNewPassword.getEchoChar() == '•') {
             lbHidden.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/show.png")));
             txtNewPassword.setEchoChar((char) 0);
         } else {
             lbHidden.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hide.png")));
-            txtNewPassword.setEchoChar('*');
+            txtNewPassword.setEchoChar('•');
         }
     }//GEN-LAST:event_lbHiddenMouseClicked
 
@@ -314,12 +349,12 @@ public class ResetPassword extends javax.swing.JFrame {
     }//GEN-LAST:event_lbHiddenMouseExited
 
     private void lbHidden1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHidden1MouseClicked
-        if (txtCfPassword.getEchoChar() == '*') {
+        if (txtCfPassword.getEchoChar() == '•') {
             lbHidden1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/show.png")));
             txtCfPassword.setEchoChar((char) 0);
         } else {
             lbHidden1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hide.png")));
-            txtCfPassword.setEchoChar('*');
+            txtCfPassword.setEchoChar('•');
         }
     }//GEN-LAST:event_lbHidden1MouseClicked
 

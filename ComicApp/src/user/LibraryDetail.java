@@ -17,7 +17,8 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
-public class LibraryDetail extends javax.swing.JFrame {
+public class LibraryDetail extends javax.swing.JFrame implements FileOperations {
+
     private List<Library> libraryList;
     private static final String LIBRARY_FILE = "LIBRARY.TXT";
 
@@ -51,7 +52,7 @@ public class LibraryDetail extends javax.swing.JFrame {
         });
     }
 
-    private void LoadComicsFromFile() {
+    public void LoadComicsFromFile() {
         File file = new File(COMIC_FILE);
         try {
             if (!file.exists()) {
@@ -110,7 +111,7 @@ public class LibraryDetail extends javax.swing.JFrame {
         }
     }
 
-    private void LoadLibraryFromFile() {
+    public void LoadLibraryFromFile() {
         File file = new File(LIBRARY_FILE);
         try {
             if (!file.exists()) {
@@ -181,6 +182,36 @@ public class LibraryDetail extends javax.swing.JFrame {
             }
         }
         return null;
+    }
+
+    @Override
+    public void LoadUsersFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void LoadHistoryFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void LoadChaptersFromFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void WriteUsersToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void writeLibraryToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void writeHistoryToFile() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @SuppressWarnings("unchecked")
@@ -392,7 +423,7 @@ public class LibraryDetail extends javax.swing.JFrame {
             Comic selectedComic = findComicByName(comicTitle);
 
             if (selectedComic != null) {
-                ComicDetail comicDetail = new ComicDetail(user, home, selectedComic.getComicID());
+                ComicDetail comicDetail = new ComicDetail(user, home, this, selectedComic.getComicID());
                 comicDetail.setVisible(true);
             } else {
                 System.out.println("Comic not found!");
