@@ -7,6 +7,7 @@ A platform that allow users to browse, read, and manage comics.
 1. User Registration and Login
 2. Search and Recommendation
 3. Comic Viewing
+4. Library and History
 
 ## Version 2
 This is the version 2 design draft for the [Comic Reading Platform](https://docs.google.com/document/d/1G0J2kwXOEHS3Y44X0mwu7QlIbOT5PVt0Lc8i-3fMcJ8/edit?usp=sharing)
