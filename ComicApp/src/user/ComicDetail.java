@@ -4,6 +4,7 @@ import Model.User;
 import Model.Comic;
 import Model.Library;
 import Model.Chapter;
+import Model.History;
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -21,6 +22,9 @@ import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
 public class ComicDetail extends javax.swing.JFrame {
+
+    private List<History> historyList;
+    private static final String HISTORY_FILE = "HISTORY.TXT";
 
     private List<Library> libraryList;
     private static final String LIBRARY_FILE = "LIBRARY.TXT";
@@ -49,6 +53,7 @@ public class ComicDetail extends javax.swing.JFrame {
         setLbComicIcon();
         LoadComicsFromFile();
         LoadChaptersFromFile();
+        LoadHistoryFromFile();
         LoadLibraryFromFile();
         displayComicInfo();
         checkFollowStatus();
@@ -138,6 +143,63 @@ public class ComicDetail extends javax.swing.JFrame {
         } else {
             chapterList = new ArrayList<>();
             System.out.println("No data in chapter file.");
+        }
+    }
+
+    private void LoadHistoryFromFile() {
+        File file = new File(HISTORY_FILE);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (file.length() > 0) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(HISTORY_FILE))) {
+                String line;
+                historyList = new ArrayList<>();
+
+                while ((line = reader.readLine()) != null) {
+                    String[] historyData = line.split(";");
+
+                    String userID = historyData[0];
+                    Set<String> comicIDs = new HashSet<>();
+
+                    for (int i = 1; i < historyData.length; i++) {
+                        comicIDs.add(historyData[i]);
+                    }
+                    History history = new History(userID, comicIDs);
+                    historyList.add(history);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            historyList = new ArrayList<>();
+        }
+    }
+
+    private void writeHistoryToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(HISTORY_FILE, false))) {
+            for (History history : historyList) {
+                StringBuilder line = new StringBuilder();
+                line.append(history.getUserID()).append(";");
+
+                for (String comicID : history.getComicIDs()) {
+                    line.append(comicID).append(";");
+                }
+
+                if (line.charAt(line.length() - 1) == ';') {
+                    line.setLength(line.length() - 1);
+                }
+
+                writer.write(line.toString());
+                writer.newLine();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -272,6 +334,33 @@ public class ComicDetail extends javax.swing.JFrame {
         }
 
         writeLibraryToFile();
+    }
+
+    private List<String> getUserHistory() {
+        List<String> userHistory = new ArrayList<>();
+
+        for (History history : historyList) {
+            if (history.getUserID().equals(String.valueOf(user.getUserID()))) {
+                userHistory.addAll(history.getComicIDs());
+                break;
+            }
+        }
+        return userHistory;
+    }
+
+    private void addComicToHistory() {
+        List<String> userHistory = getUserHistory();
+
+        if (!userHistory.contains(comicId)) {
+            for (History history : historyList) {
+                if (history.getUserID().equals(String.valueOf(user.getUserID()))) {
+                    history.getComicIDs().add(comicId);
+                    break;
+                }
+            }
+
+            writeHistoryToFile();
+        }
     }
 
     private void LoadChaptersToTable() {
@@ -465,6 +554,8 @@ public class ComicDetail extends javax.swing.JFrame {
             String chapterNumber = ChapterTable.getValueAt(row, 0).toString();
 
             String chapterTitle = ChapterTable.getValueAt(row, 1).toString();
+            
+            addComicToHistory();
 
             new ChapterDetail(this, home, comicId, chapterNumber).setVisible(true);
         }

@@ -1,6 +1,7 @@
 package user;
 
 import Model.Comic;
+import Model.History;
 import Model.Library;
 import Model.User;
 import java.awt.Color;
@@ -17,9 +18,10 @@ import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
-public class LibraryDetail extends javax.swing.JFrame {
-    private List<Library> libraryList;
-    private static final String LIBRARY_FILE = "LIBRARY.TXT";
+public class HistoryDetail extends javax.swing.JFrame {
+
+    private List<History> historyList;
+    private static final String HISTORY_FILE = "HISTORY.TXT";
 
     private List<Comic> comicList;
     private static final String COMIC_FILE = "COMIC.TXT";
@@ -27,25 +29,25 @@ public class LibraryDetail extends javax.swing.JFrame {
     private Home home;
     private User user;
 
-    public LibraryDetail() {
+    public HistoryDetail() {
         initComponents();
         setLocationRelativeTo(null);
     }
 
-    public LibraryDetail(User user, Home home) {
+    public HistoryDetail(User user, Home home) {
         this();
         this.user = user;
         this.home = home;
         setLbMyAccountText();
         LoadComicsFromFile();
-        LoadLibraryFromFile();
+        LoadHistoryFromFile();
         LoadComicsToTable();
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                LibraryDetail.this.setVisible(false);
+                HistoryDetail.this.setVisible(false);
                 home.setVisible(true);
             }
         });
@@ -90,28 +92,29 @@ public class LibraryDetail extends javax.swing.JFrame {
         }
     }
 
-    private void LoadComicsToTable() {
-        DefaultTableModel model = (DefaultTableModel) ComicTable.getModel();
-        model.setRowCount(0);
+private void LoadComicsToTable() {
+    DefaultTableModel model = (DefaultTableModel) ComicTable.getModel();
+    model.setRowCount(0);
 
-        List<String> userLibrary = getUserLibrary();
+    List<String> userHistory = getUserHistory();
 
-        List<Object[]> comicDetails = getComicDetails(userLibrary);
+    List<Object[]> comicDetails = getComicDetails(userHistory);
 
-        for (int i = 0; i < comicDetails.size(); i++) {
-            Object[] comicData = comicDetails.get(i);
-            model.addRow(new Object[]{
-                i + 1,
-                comicData[1],
-                comicData[4],
-                comicData[3],
-                comicData[2]
-            });
-        }
+    for (int i = 0; i < comicDetails.size(); i++) {
+        Object[] comicData = comicDetails.get(i);
+        model.addRow(new Object[]{
+            i + 1,       
+            comicData[1],   
+            comicData[4],     
+            comicData[3],       
+            comicData[2]  
+        });
     }
+}
 
-    private void LoadLibraryFromFile() {
-        File file = new File(LIBRARY_FILE);
+
+    private void LoadHistoryFromFile() {
+        File file = new File(HISTORY_FILE);
         try {
             if (!file.exists()) {
                 file.createNewFile();
@@ -121,42 +124,47 @@ public class LibraryDetail extends javax.swing.JFrame {
         }
 
         if (file.length() > 0) {
-            try (BufferedReader br = new BufferedReader(new FileReader(LIBRARY_FILE))) {
-                libraryList = new ArrayList<>();
+            try (BufferedReader reader = new BufferedReader(new FileReader(HISTORY_FILE))) {
                 String line;
-                while ((line = br.readLine()) != null) {
-                    String[] data = line.split(",");
-                    String userID = data[0].trim();
-                    Set<String> comicIDList = new HashSet<>();
-                    for (int i = 1; i < data.length; i++) {
-                        comicIDList.add(data[i].trim());
+                historyList = new ArrayList<>();
+
+                while ((line = reader.readLine()) != null) {
+                    String[] historyData = line.split(";");
+
+                    String userID = historyData[0];
+                    Set<String> comicIDs = new HashSet<>();
+
+                    for (int i = 1; i < historyData.length; i++) {
+                        comicIDs.add(historyData[i]);
                     }
-                    Library library = new Library(userID, comicIDList);
-                    libraryList.add(library);
+                    History history = new History(userID, comicIDs);
+                    historyList.add(history);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
         } else {
-            libraryList = new ArrayList<>();
+            historyList = new ArrayList<>();
         }
     }
+
 
     public void setLbMyAccountText() {
         lbMyAccount.setText(user.getUsername());
     }
 
-    private List<String> getUserLibrary() {
-        List<String> userLibrary = new ArrayList<>();
+    private List<String> getUserHistory() {
+        List<String> userHistory = new ArrayList<>();
 
-        for (Library library : libraryList) {
-            if (library.getUserID().equals(String.valueOf(user.getUserID()))) {
-                userLibrary.addAll(library.getFollowedComicIDs());
+        for (History history : historyList) {
+            if (history.getUserID().equals(String.valueOf(user.getUserID()))) {
+                userHistory.addAll(history.getComicIDs());
                 break;
             }
         }
-        return userLibrary;
+        return userHistory;
     }
+
 
     private List<Object[]> getComicDetails(List<String> comicIds) {
         List<Object[]> comicDetails = new ArrayList<>();
@@ -191,7 +199,7 @@ public class LibraryDetail extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        lbLibrary = new javax.swing.JLabel();
+        lbHistory = new javax.swing.JLabel();
         lbMyAccount = new javax.swing.JLabel();
         lbHome = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
@@ -227,9 +235,9 @@ public class LibraryDetail extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(211, 211, 211));
 
-        lbLibrary.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
-        lbLibrary.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/library.png"))); // NOI18N
-        lbLibrary.setText("Library");
+        lbHistory.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        lbHistory.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/history.png"))); // NOI18N
+        lbHistory.setText("History");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -237,15 +245,14 @@ public class LibraryDetail extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbLibrary)
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addComponent(lbHistory)
+                .addContainerGap(10, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbLibrary, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(lbHistory, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         lbMyAccount.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
@@ -335,7 +342,7 @@ public class LibraryDetail extends javax.swing.JFrame {
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -420,7 +427,7 @@ public class LibraryDetail extends javax.swing.JFrame {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LibraryDetail().setVisible(true);
+                new HistoryDetail().setVisible(true);
             }
         });
     }
@@ -433,8 +440,8 @@ public class LibraryDetail extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbHistory;
     private javax.swing.JLabel lbHome;
-    private javax.swing.JLabel lbLibrary;
     private javax.swing.JLabel lbMyAccount;
     // End of variables declaration//GEN-END:variables
 }

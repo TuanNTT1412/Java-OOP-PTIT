@@ -384,7 +384,11 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_lbLibraryMouseClicked
 
     private void lbHistoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbHistoryMouseClicked
-
+        HistoryDetail historyDetail = new HistoryDetail(user, this);
+        historyDetail.setVisible(true);
+        lbHistory.setBackground(null);
+        lbHistory.setOpaque(false);
+        this.dispose();
     }//GEN-LAST:event_lbHistoryMouseClicked
 
     private void lbLibraryMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbLibraryMouseEntered
